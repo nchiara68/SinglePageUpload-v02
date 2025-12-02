@@ -1,82 +1,17 @@
-// amplify/data/resource.ts - FIXED with proper owner authorization
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
+/*== STEP 1 ===============================================================
+The section below creates a Todo database table with a "content" field. Try
+adding a new "isDone" field as a boolean. The authorization rule below
+specifies that any unauthenticated user can "create", "read", "update", 
+and "delete" any "Todo" records.
+=========================================================================*/
 const schema = a.schema({
-  FileType: a.enum(['CSV', 'XLSX']),
-  ProcessingStatus: a.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']),
-  Currency: a.enum(['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY']),
-
-  InvoiceUploadJob: a.model({
-    fileName: a.string().required(),
-    fileType: a.ref('FileType').required(),
-    status: a.string().required(),
-    s3Key: a.string().required(),
-    totalInvoices: a.integer(),
-    successfulInvoices: a.integer(),
-    failedInvoices: a.integer(),
-    errorMessage: a.string(),
-    processingErrors: a.json(),
-    processingStartedAt: a.datetime(),
-    processingCompletedAt: a.datetime(),
-    invoices: a.hasMany('Invoice', 'uploadJobId'),
-  })
-  .authorization(allow => [
-    allow.owner() // ✅ Only the owner can access their upload jobs
-  ]),
-
-  // Table 1: Working invoice data (gets deleted after submission)
-  Invoice: a.model({
-    invoiceId: a.string().required(),
-    sellerId: a.string().required(),
-    debtorId: a.string().required(),
-    currency: a.string().required(),
-    amount: a.float().required(),
-    product: a.string().required(),
-    issueDate: a.date().required(),
-    dueDate: a.date().required(),
-    uploadDate: a.date().required(),
-    uploadJobId: a.id().required(),
-    uploadJob: a.belongsTo('InvoiceUploadJob', 'uploadJobId'),
-    isValid: a.boolean(),
-    validationErrors: a.string().array(),
-    // PDF document storage
-    pdfS3Key: a.string(), // Relative S3 path (user-files/identity/invoices/...)
-    pdfFileName: a.string(), // Original filename for display
-    pdfUploadedAt: a.datetime(), // When PDF was uploaded
-    // Full S3 bucket path for backend storage
-    pdfS3FullPath: a.string(), // Complete path including bucket name
-  })
-  .authorization(allow => [
-    allow.owner() // ✅ Only the owner can access their invoices
-  ]),
-
-  // Table 2: Submitted invoice data (permanent storage)
-  SubmittedInvoice: a.model({
-    invoiceId: a.string().required(),
-    sellerId: a.string().required(),
-    debtorId: a.string().required(),
-    currency: a.string().required(),
-    amount: a.float().required(),
-    product: a.string().required(),
-    issueDate: a.date().required(),
-    dueDate: a.date().required(),
-    uploadDate: a.date().required(),
-    submittedDate: a.date().required(),
-    submittedAt: a.datetime().required(),
-    // Original upload job reference
-    originalUploadJobId: a.string(),
-    originalInvoiceId: a.string(), // Reference to the original Invoice table ID
-    // PDF document storage (copied from Invoice)
-    pdfS3Key: a.string(),
-    pdfFileName: a.string(),
-    pdfUploadedAt: a.datetime(),
-    pdfS3FullPath: a.string(),
-    // Submission metadata
-    submittedBy: a.string(), // User who submitted
-  })
-  .authorization(allow => [
-    allow.owner() // ✅ Only the owner can access their submitted invoices
-  ]),
+  Todo: a
+    .model({
+      content: a.string(),
+    })
+    .authorization((allow) => [allow.guest()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -84,6 +19,35 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool",
+    defaultAuthorizationMode: 'identityPool',
   },
 });
+
+/*== STEP 2 ===============================================================
+Go to your frontend source code. From your client-side code, generate a
+Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
+WORK IN THE FRONTEND CODE FILE.)
+
+Using JavaScript or Next.js React Server Components, Middleware, Server 
+Actions or Pages Router? Review how to generate Data clients for those use
+cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
+=========================================================================*/
+
+/*
+"use client"
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>() // use this Data client for CRUDL requests
+*/
+
+/*== STEP 3 ===============================================================
+Fetch records from the database and use them in your frontend component.
+(THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
+=========================================================================*/
+
+/* For example, in a React component, you can use this snippet in your
+  function's RETURN statement */
+// const { data: todos } = await client.models.Todo.list()
+
+// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>

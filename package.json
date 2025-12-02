@@ -14,7 +14,7 @@
     "@aws-amplify/ui-react-storage": "^3.11.0",
     "@aws-sdk/client-s3": "^3.832.0",
     "@types/aws-lambda": "^8.10.150",
-    "aws-amplify": "^6.15.1",
+    "aws-amplify": "^6.15.8",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.522.0",
     "react": "^18.2.0",
@@ -24,8 +24,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.5.0",
-    "@aws-amplify/backend-cli": "^1.2.9",
+    "@aws-amplify/backend": "^1.18.0",
+    "@aws-amplify/backend-cli": "^1.8.0",
     "@types/node": "^24.0.3",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
@@ -35,14 +35,14 @@
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
     "aws-cdk": "^2.138.0",
-    "aws-cdk-lib": "^2.138.0",
-    "constructs": "^10.3.0",
+    "aws-cdk-lib": "^2.216.0",
+    "constructs": "^10.4.3",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "tsx": "^4.7.2",
-    "typescript": "^5.4.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "vite": "^5.4.10"
   }
 }
