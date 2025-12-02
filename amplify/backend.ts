@@ -1,11 +1,14 @@
+// amplify/backend.ts - Updated to expose bucket name (Gen 2 compatible)
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
+import { storage } from './storage/resource';
 
-/**
- * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
- */
-defineBackend({
+// Define and configure the backend
+export const backend = defineBackend({
   auth,
   data,
+  storage,
 });
+
+export default backend;
